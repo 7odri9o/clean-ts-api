@@ -4,8 +4,8 @@
   "description": "Projeto desenvolvido durante os estudos do curso NodeJs, Typescript, TDD, DDD, Clean Architecture e SOLID na [udemy](https://www.udemy.com/course/tdd-com-mango/?utm_source=adwords&utm_medium=udemyads&utm_campaign=Webindex_Catchall_la.PT_cc.BR&utm).",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
     "prepare": "husky install",
+    "test": "jest",
     "test:staged": "jest"
   },
   "repository": {
@@ -20,16 +20,20 @@
   },
   "homepage": "https://gitlab.com/courses-rodrigo-rocha/udemy/manguinho/tdd-com-mango#readme",
   "devDependencies": {
+    "@types/jest": "^27.0.2",
     "@types/node": "^16.11.6",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "eslint": "^7.32.0",
     "eslint-config-standard-with-typescript": "^21.0.1",
     "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jest": "^25.2.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.1",
     "git-commit-msg-linter": "^3.2.8",
     "husky": "^7.0.4",
+    "jest": "^27.3.1",
     "lint-staged": "^11.2.6",
+    "ts-jest": "^27.0.7",
     "typescript": "*"
   }
 }
