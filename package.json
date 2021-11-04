@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://gitlab.com/courses-rodrigo-rocha/udemy/manguinho/tdd-com-mango/issues"
   },
-  "homepage": "https://gitlab.com/courses-rodrigo-rocha/udemy/manguinho/tdd-com-mango#readme"
+  "homepage": "https://gitlab.com/courses-rodrigo-rocha/udemy/manguinho/tdd-com-mango#readme",
+  "devDependencies": {
+    "git-commit-msg-linter": "^3.2.8"
+  }
 }
