@@ -31,19 +31,16 @@ export class SignUpController implements Controller {
         return badRequest(new InvalidParamError('email'))
       }
 
-      this.addAccount.add({
+      const account = this.addAccount.add({
         name,
         email,
         password
       })
 
-      class SignUpHttpResponse implements HttpResponse {
-        statusCode: number
-        body: any
+      return {
+        statusCode: 200,
+        body: account
       }
-
-      const signUpHttpResponse = new SignUpHttpResponse()
-      return signUpHttpResponse
     } catch (error) {
       return serverError()
     }
