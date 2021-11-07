@@ -24,6 +24,7 @@
   },
   "homepage": "https://gitlab.com/courses-rodrigo-rocha/udemy/manguinho/tdd-com-mango#readme",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.6",
     "@types/validator": "^13.6.6",
@@ -42,6 +43,7 @@
     "typescript": "*"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
     "validator": "^13.7.0"
   }
 }
