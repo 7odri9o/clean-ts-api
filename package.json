@@ -24,7 +24,10 @@
   },
   "homepage": "https://gitlab.com/courses-rodrigo-rocha/udemy/manguinho/tdd-com-mango#readme",
   "devDependencies": {
+    "@shelf/jest-mongodb": "^2.1.0",
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.0.2",
+    "@types/mongodb": "^4.0.7",
     "@types/node": "^16.11.6",
     "@types/validator": "^13.6.6",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
@@ -42,6 +45,8 @@
     "typescript": "*"
   },
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "mongodb": "^4.1.4",
     "validator": "^13.7.0"
   }
 }
