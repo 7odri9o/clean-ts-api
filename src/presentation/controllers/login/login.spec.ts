@@ -1,10 +1,10 @@
-import { Authenticator, HttpRequest, Validation } from './login-protocols'
+import { Authentication, HttpRequest, Validation } from './login-protocols'
 import { MissingParamError, ServerError } from '../../errors'
 import { badRequest, ok, serverError, unauthorized } from '../../helpers/http/http-helper'
 import { LoginController } from './login'
 
-const makeAuthenticator = (): Authenticator => {
-  class AuthenticatorStub implements Authenticator {
+const makeAuthenticator = (): Authentication => {
+  class AuthenticatorStub implements Authentication {
     async auth (email: string, password: string): Promise<string> {
       return new Promise(resolve => resolve('any_token'))
     }
@@ -31,7 +31,7 @@ const makeFakeRequest = (): HttpRequest => ({
 interface SutTypes {
   sut: LoginController
   validationStub: Validation
-  authenticatorStub: Authenticator
+  authenticatorStub: Authentication
 }
 
 const makeSut = (): SutTypes => {
