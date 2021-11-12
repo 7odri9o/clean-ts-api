@@ -35,4 +35,19 @@ describe('Account Mongo Repository', () => {
     expect(account.email).toBe('valid_email@email.com')
     expect(account.password).toBe('valid_password')
   })
+
+  test('Should return an account on loadByEmail success', async () => {
+    const sut = makeSut()
+    await accountCollection.insertOne({
+      name: 'valid_name',
+      email: 'valid_email@email.com',
+      password: 'valid_password'
+    })
+    const account = await sut.loadByEmail('valid_email@email.com')
+    expect(account).toBeTruthy()
+    expect(account?.id).toBeTruthy()
+    expect(account?.name).toBe('valid_name')
+    expect(account?.email).toBe('valid_email@email.com')
+    expect(account?.password).toBe('valid_password')
+  })
 })
