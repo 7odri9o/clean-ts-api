@@ -5,6 +5,7 @@
   "scripts": {
     "prepare": "husky install",
     "start": "node dist/main/server.js",
+    "debug": "node --inspect=0.0.0.0:9222 --nolazy dist/main/server.js",
     "build": "rimraf dist && tsc",
     "dev": "sucrase-node src/main/server.ts",
     "up": "npm run build && docker-compose up -d",
@@ -29,6 +30,7 @@
   "homepage": "https://gitlab.com/courses-rodrigo-rocha/udemy/manguinho/tdd-com-mango#readme",
   "devDependencies": {
     "@shelf/jest-mongodb": "^2.1.0",
+    "@tsconfig/node14": "^1.0.1",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.0.2",
     "@types/jsonwebtoken": "^8.5.5",

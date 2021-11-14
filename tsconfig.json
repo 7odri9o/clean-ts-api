@@ -1,10 +1,13 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Node 14",
   "compilerOptions": {
     "outDir": "dist",
     "module":"commonjs",
-    "target": "es2019",
+    "target": "es2020",
     "esModuleInterop": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "sourceMap": true
   },
   "include": [
     "src"
