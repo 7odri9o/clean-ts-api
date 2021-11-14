@@ -4,12 +4,12 @@ import { AddAccount, AddAccountModel, AccountModel, HttpRequest, Validation, Aut
 import { ok, badRequest, serverError } from '../../helpers/http/http-helper'
 
 const makeAuthentication = (): Authentication => {
-  class AuthenticatorStub implements Authentication {
+  class AuthenticationStub implements Authentication {
     async auth (authentication: AuthenticationModel): Promise<string> {
       return new Promise(resolve => resolve('any_token'))
     }
   }
-  return new AuthenticatorStub()
+  return new AuthenticationStub()
 }
 
 const makeAddAccount = (): AddAccount => {
@@ -115,9 +115,9 @@ describe('SignUp Controller', () => {
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
   })
 
-  test('Should call Authenticator with correct values', async () => {
-    const { sut, authenticationStub: authenticatorStub } = makeSut()
-    const authSpy = jest.spyOn(authenticatorStub, 'auth')
+  test('Should call Authentication with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const authSpy = jest.spyOn(authenticationStub, 'auth')
     await sut.handle(makeFakeRequest())
     expect(authSpy).toHaveBeenCalledWith(makeFakeAuthentication())
   })
