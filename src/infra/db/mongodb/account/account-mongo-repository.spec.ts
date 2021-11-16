@@ -25,11 +25,13 @@ describe('Account Mongo Repository', () => {
   describe('add()', () => {
     test('Should return an account on add success', async () => {
       const sut = makeSut()
+
       const account = await sut.add({
         name: 'valid_name',
         email: 'valid_email@email.com',
         password: 'valid_password'
       })
+
       expect(account).toBeTruthy()
       expect(account.id).toBeTruthy()
       expect(account.name).toBe('valid_name')
@@ -46,7 +48,9 @@ describe('Account Mongo Repository', () => {
         email: 'valid_email@email.com',
         password: 'valid_password'
       })
+
       const account = await sut.loadByEmail('valid_email@email.com')
+
       expect(account).toBeTruthy()
       expect(account?.id).toBeTruthy()
       expect(account?.name).toBe('valid_name')
@@ -56,7 +60,9 @@ describe('Account Mongo Repository', () => {
 
     test('Should return null if loadByEmail fails', async () => {
       const sut = makeSut()
+
       const account = await sut.loadByEmail('valid_email@email.com')
+
       expect(account).toBeFalsy()
     })
   })
@@ -72,9 +78,11 @@ describe('Account Mongo Repository', () => {
       const { insertedId } = await accountCollection.insertOne(accountData)
       const accountId = insertedId.toHexString()
       const accountBeforeUpdate = await accountCollection.findOne({ email: accountData.email })
-      expect(accountBeforeUpdate?.accessToken).toBeFalsy()
+
       await sut.updateAccessToken(accountId, 'any_token')
+
       const accountAfterUpdate = await accountCollection.findOne({ email: accountData.email })
+      expect(accountBeforeUpdate?.accessToken).toBeFalsy()
       expect(accountAfterUpdate).toBeTruthy()
       expect(accountAfterUpdate?.accessToken).toBe('any_token')
     })
@@ -89,7 +97,9 @@ describe('Account Mongo Repository', () => {
         password: 'valid_password',
         accessToken: 'any_token'
       })
+
       const account = await sut.loadByToken('any_token')
+
       expect(account).toBeTruthy()
       expect(account?.id).toBeTruthy()
       expect(account?.name).toBe('valid_name')
@@ -151,7 +161,9 @@ describe('Account Mongo Repository', () => {
 
     test('Should return null if loadByToken returns null', async () => {
       const sut = makeSut()
+
       const account = await sut.loadByToken('any_token')
+
       expect(account).toBeFalsy()
     })
   })

@@ -24,6 +24,7 @@ describe('Account Mongo Repository', () => {
 
   test('Should adds a new survey on success', async () => {
     const sut = makeSut()
+
     await sut.add({
       question: 'any_question',
       answers: [
@@ -36,6 +37,7 @@ describe('Account Mongo Repository', () => {
         }
       ]
     })
+
     const survey = await surveyCollection.findOne({ question: 'any_question' })
     expect(survey).toBeTruthy()
   })

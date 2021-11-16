@@ -6,6 +6,7 @@ describe('Cors Middleware', () => {
     app.get('/test_cors', (req, res) => {
       res.send()
     })
+
     await request(app)
       .get('/test_body_parser')
       .expect('access-control-allow-origin', '*')
