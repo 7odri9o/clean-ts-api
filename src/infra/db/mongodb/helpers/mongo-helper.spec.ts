@@ -1,4 +1,7 @@
+import { Collection } from 'mongodb'
 import { MongoHelper as sut } from './mongo-helper'
+
+let accountCollection: Collection
 
 describe('Mongo Helper', () => {
   beforeAll(async () => {
@@ -10,9 +13,11 @@ describe('Mongo Helper', () => {
   })
 
   test('Should reconnect if mongodb is down', async () => {
-    let accountCollection = await sut.getCollection('accounts')
+    accountCollection = await sut.getCollection('accounts')
     expect(accountCollection).toBeTruthy()
+
     await sut.disconnect()
+
     accountCollection = await sut.getCollection('accounts')
     expect(accountCollection).toBeTruthy()
   })
