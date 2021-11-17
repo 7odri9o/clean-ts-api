@@ -92,5 +92,13 @@ describe('Account Mongo Repository', () => {
       expect(aswer2).toBe('other_answer')
       expect(image2).toBe('other_image')
     })
+
+    test('Should load an empty survey\'s list', async () => {
+      const sut = makeSut()
+
+      const surveys = await sut.loadAll()
+
+      expect(surveys).toEqual([])
+    })
   })
 })
