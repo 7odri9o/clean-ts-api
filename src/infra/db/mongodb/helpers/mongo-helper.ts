@@ -24,5 +24,12 @@ export const MongoHelper = {
   map: (data: any): any => {
     const { _id, ...rest } = data
     return { ...rest, id: _id.toHexString() }
+  },
+
+  mapList: (data: any[]): any[] => {
+    return data.map(item => {
+      const { _id, ...rest } = item
+      return { ...rest, id: _id.toHexString() }
+    })
   }
 }
