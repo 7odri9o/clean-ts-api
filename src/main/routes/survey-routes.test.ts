@@ -24,6 +24,28 @@ const makeFakeSurveys = (): any[] => ([{
   date: new Date()
 }])
 
+const insertFakeSurveys = async (): Promise<void> => {
+  await surveyCollection.insertMany(makeFakeSurveys())
+}
+
+const makeAccessToken = async (): Promise<string> => {
+  const { insertedId } = await accountCollection.insertOne({
+    name: 'any_name',
+    email: 'any_email@email.com',
+    password: 'any_password',
+    role: 'admin'
+  })
+  const token = await sign({ id: insertedId }, env.jwtSecret)
+  await accountCollection.updateOne({
+    _id: new ObjectId(insertedId)
+  }, {
+    $set: {
+      accessToken: token
+    }
+  })
+  return token
+}
+
 describe('Survey Routes', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
@@ -55,20 +77,7 @@ describe('Survey Routes', () => {
     })
 
     test('Should return 204 on add survey with valid accessToken', async () => {
-      const { insertedId } = await accountCollection.insertOne({
-        name: 'any_name',
-        email: 'any_email@email.com',
-        password: 'any_password',
-        role: 'admin'
-      })
-      const token = await sign({ id: insertedId }, env.jwtSecret)
-      await accountCollection.updateOne({
-        _id: new ObjectId(insertedId)
-      }, {
-        $set: {
-          accessToken: token
-        }
-      })
+      const token = await makeAccessToken()
       await request(app)
         .post('/api/surveys')
         .set('x-access-token', token)
@@ -91,19 +100,7 @@ describe('Survey Routes', () => {
     })
 
     test('Should return 204 on load surveys when there is no surveys and a valid accessToken is provided', async () => {
-      const { insertedId } = await accountCollection.insertOne({
-        name: 'any_name',
-        email: 'any_email@email.com',
-        password: 'any_password'
-      })
-      const token = await sign({ id: insertedId }, env.jwtSecret)
-      await accountCollection.updateOne({
-        _id: new ObjectId(insertedId)
-      }, {
-        $set: {
-          accessToken: token
-        }
-      })
+      const token = await makeAccessToken()
       await request(app)
         .get('/api/surveys')
         .set('x-access-token', token)
@@ -111,20 +108,8 @@ describe('Survey Routes', () => {
     })
 
     test('Should return 200 on load surveys when there is surveys and a valid accessToken is provided', async () => {
-      const { insertedId } = await accountCollection.insertOne({
-        name: 'any_name',
-        email: 'any_email@email.com',
-        password: 'any_password'
-      })
-      const token = await sign({ id: insertedId }, env.jwtSecret)
-      await accountCollection.updateOne({
-        _id: new ObjectId(insertedId)
-      }, {
-        $set: {
-          accessToken: token
-        }
-      })
-      await surveyCollection.insertMany(makeFakeSurveys())
+      const token = await makeAccessToken()
+      await insertFakeSurveys()
       await request(app)
         .get('/api/surveys')
         .set('x-access-token', token)
