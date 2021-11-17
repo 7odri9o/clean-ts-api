@@ -47,7 +47,9 @@ describe('DbLoadSurveys', () => {
   test('Should call LoadSurveysRepository', async () => {
     const { sut, loadSurveysRepositoryStub } = makeSut()
     const loadAllSpy = jest.spyOn(loadSurveysRepositoryStub, 'loadAll')
+
     await sut.load()
+
     expect(loadAllSpy).toHaveBeenCalled()
   })
 })
