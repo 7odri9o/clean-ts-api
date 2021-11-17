@@ -1,8 +1,10 @@
-import MockDate from 'mockdate'
-
-import { Collection } from 'mongodb'
-import { MongoHelper } from '../helpers/mongo-helper'
 import { SurveyMongoRepository } from './survey-mongo-repository'
+import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
+
+import MockDate from 'mockdate'
+import { Collection } from 'mongodb'
+
+let surveyCollection: Collection
 
 const makeFakeSurveys = (): any[] => ([{
   question: 'any_question',
@@ -23,8 +25,6 @@ const makeFakeSurveys = (): any[] => ([{
 const makeSut = (): SurveyMongoRepository => {
   return new SurveyMongoRepository()
 }
-
-let surveyCollection: Collection
 
 describe('Account Mongo Repository', () => {
   beforeAll(async () => {

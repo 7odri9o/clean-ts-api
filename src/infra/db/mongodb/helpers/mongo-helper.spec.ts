@@ -1,5 +1,6 @@
-import { Collection } from 'mongodb'
 import { MongoHelper as sut } from './mongo-helper'
+
+import { Collection } from 'mongodb'
 
 let accountCollection: Collection
 
