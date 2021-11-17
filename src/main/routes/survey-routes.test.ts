@@ -8,6 +8,22 @@ import env from '../config/env'
 let surveyCollection: Collection
 let accountCollection: Collection
 
+const makeFakeSurveys = (): any[] => ([{
+  question: 'any_question',
+  answers: [{
+    image: 'any_image',
+    answer: 'any_answer'
+  }],
+  date: new Date()
+}, {
+  question: 'other_question',
+  answers: [{
+    image: 'other_image',
+    answer: 'other_answer'
+  }],
+  date: new Date()
+}])
+
 describe('Survey Routes', () => {
   beforeAll(async () => {
     await MongoHelper.connect(process.env.MONGO_URL as string)
@@ -92,6 +108,27 @@ describe('Survey Routes', () => {
         .get('/api/surveys')
         .set('x-access-token', token)
         .expect(204)
+    })
+
+    test('Should return 200 on load surveys when there is surveys and a valid accessToken is provided', async () => {
+      const { insertedId } = await accountCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@email.com',
+        password: 'any_password'
+      })
+      const token = await sign({ id: insertedId }, env.jwtSecret)
+      await accountCollection.updateOne({
+        _id: new ObjectId(insertedId)
+      }, {
+        $set: {
+          accessToken: token
+        }
+      })
+      await surveyCollection.insertMany(makeFakeSurveys())
+      await request(app)
+        .get('/api/surveys')
+        .set('x-access-token', token)
+        .expect(200)
     })
   })
 })
