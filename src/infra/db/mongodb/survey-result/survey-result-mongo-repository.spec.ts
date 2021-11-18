@@ -23,8 +23,22 @@ const makeFakeAccount = (): any => ({
   password: 'valid_password'
 })
 
+const makeFakeSurveyResult = (surveyId: string, accountId: string): any => {
+  return {
+    surveyId,
+    accountId,
+    answer: 'any_answer',
+    date: new Date()
+  }
+}
+
 const getSurveyId = async (): Promise<string> => {
-  const { insertedId } = await surveyCollection.insertOne(makeFakeSurvey())
+  const { insertedId } = await surveyResultCollection.insertOne(makeFakeSurvey())
+  return insertedId.toHexString()
+}
+
+const getSurveyResultId = async (surveyId: string, accountId: string): Promise<string> => {
+  const { insertedId } = await surveyResultCollection.insertOne(makeFakeSurveyResult(surveyId, accountId))
   return insertedId.toHexString()
 }
 
@@ -76,6 +90,27 @@ describe('Account Mongo Repository', () => {
       expect(surveyResult?.accountId).toBeTruthy()
       expect(surveyResult?.date).toBeTruthy()
       expect(surveyResult?.answer).toBe('any_answer')
+    })
+
+    test('Should update a survey result if exists', async () => {
+      const surveyId = await getSurveyId()
+      const accountId = await getAccountId()
+      const surveyResultId = await getSurveyResultId(surveyId, accountId)
+      const sut = makeSut()
+
+      const surveyResult = await sut.save({
+        surveyId,
+        accountId,
+        answer: 'other_answer',
+        date: new Date()
+      })
+
+      expect(surveyResult).toBeTruthy()
+      expect(surveyResult?.id).toEqual(surveyResultId)
+      expect(surveyResult?.surveyId).toBeTruthy()
+      expect(surveyResult?.accountId).toBeTruthy()
+      expect(surveyResult?.date).toBeTruthy()
+      expect(surveyResult?.answer).toBe('other_answer')
     })
   })
 })
