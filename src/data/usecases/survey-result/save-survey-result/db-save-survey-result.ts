@@ -1,4 +1,9 @@
-import { SurveyResultModel, SaveSurveyResult, SaveSurveyResultModel, SaveSurveyResultRepository } from './db-save-survey-result-protocols'
+import {
+  SurveyResultModel,
+  SaveSurveyResult,
+  SaveSurveyResultModel,
+  SaveSurveyResultRepository
+} from './db-save-survey-result-protocols'
 
 export class DbSaveSurveyResult implements SaveSurveyResult {
   constructor (private readonly saveSurveyResultRepository: SaveSurveyResultRepository) {}
