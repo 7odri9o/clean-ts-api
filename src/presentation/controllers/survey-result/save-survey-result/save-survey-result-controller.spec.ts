@@ -57,14 +57,18 @@ describe('SaveSurveyResultController', () => {
   test('Should call LoadSurveyById with correct values', async () => {
     const { sut, loadSurveyByIdStub } = makeSut()
     const loadById = jest.spyOn(loadSurveyByIdStub, 'loadById')
+
     await sut.handle(makeFakeRequest())
+
     expect(loadById).toHaveBeenCalledWith('any_survey_id')
   })
 
   test('Should return 403 if LoadSurveyById returns null', async () => {
     const { sut, loadSurveyByIdStub } = makeSut()
     jest.spyOn(loadSurveyByIdStub, 'loadById').mockReturnValueOnce(new Promise(resolve => resolve(null)))
+
     const httpResponse = await sut.handle(makeFakeRequest())
+
     expect(httpResponse).toEqual(forbidden(new InvalidParamError('surveyId')))
   })
 
