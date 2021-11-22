@@ -8,3 +8,10 @@ export type HttpRequest = {
   headers?: any
   params?: any
 }
+
+export type AuthenticatedHttpRequest = {
+  body?: any
+  headers?: any
+  params?: any
+  accountId: string
+}
