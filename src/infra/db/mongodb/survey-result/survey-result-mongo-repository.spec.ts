@@ -54,7 +54,7 @@ const makeSut = (): SurveyResultMongoRepository => {
 describe('Account Mongo Repository', () => {
   beforeAll(async () => {
     MockDate.set(new Date())
-    await MongoHelper.connect(process.env.MONGO_URL as string)
+    await MongoHelper.connect(process.env.MONGO_URL)
   })
 
   afterAll(async () => {
