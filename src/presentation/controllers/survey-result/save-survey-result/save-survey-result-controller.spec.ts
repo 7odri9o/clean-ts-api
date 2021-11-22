@@ -1,11 +1,11 @@
 import { SaveSurveyResultController } from './save-survey-result-controller'
-import { LoadSurveyById, SaveSurveyResult, SaveSurveyResultModel, SurveyModel, SurveyResultModel, AuthenticatedHttpRequest } from './save-survey-result-controller-protocols'
+import { LoadSurveyById, SaveSurveyResult, SaveSurveyResultModel, SurveyModel, SurveyResultModel, HttpRequest } from './save-survey-result-controller-protocols'
 import { forbidden, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import { InvalidParamError, ServerError } from '@/presentation/errors'
 
 import MockDate from 'mockdate'
 
-const makeFakeRequest = (): AuthenticatedHttpRequest => ({
+const makeFakeRequest = (): HttpRequest => ({
   params: {
     surveyId: 'valid_survey_id'
   },
