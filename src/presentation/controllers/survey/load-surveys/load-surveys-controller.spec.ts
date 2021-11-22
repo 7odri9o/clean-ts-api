@@ -1,4 +1,4 @@
-import { LoadSurveys, SurveyModel } from './load-surveys-controller-protocols'
+import { AuthenticatedHttpRequest, LoadSurveys, SurveyModel } from './load-surveys-controller-protocols'
 import { LoadSurveysController } from './load-surveys-controller'
 import { noContent, ok, serverError } from '@/presentation/helpers/http/http-helper'
 
@@ -31,6 +31,10 @@ const makeFakeSurveys = (): SurveyModel[] => ([{
   date: new Date()
 }])
 
+const makeFakeAuthenticatedHttpRequest = (): AuthenticatedHttpRequest => ({
+  accountId: 'any_account_id'
+})
+
 type SutTypes = {
   sut: LoadSurveysController
   loadSurveysStub: LoadSurveys
@@ -58,7 +62,7 @@ describe('LoadSurveys Controller', () => {
     const { sut, loadSurveysStub } = makeSut()
     const loadSpy = jest.spyOn(loadSurveysStub, 'load')
 
-    await sut.handle({})
+    await sut.handle(makeFakeAuthenticatedHttpRequest())
 
     expect(loadSpy).toHaveBeenCalled()
   })
@@ -66,7 +70,7 @@ describe('LoadSurveys Controller', () => {
   test('Should return 200 on success', async () => {
     const { sut } = makeSut()
 
-    const httpResponse = await sut.handle({})
+    const httpResponse = await sut.handle(makeFakeAuthenticatedHttpRequest())
 
     expect(httpResponse).toEqual(ok(makeFakeSurveys()))
   })
@@ -75,7 +79,7 @@ describe('LoadSurveys Controller', () => {
     const { sut, loadSurveysStub } = makeSut()
     jest.spyOn(loadSurveysStub, 'load').mockReturnValueOnce(new Promise((resolve) => resolve([])))
 
-    const httpResponse = await sut.handle({})
+    const httpResponse = await sut.handle(makeFakeAuthenticatedHttpRequest())
 
     expect(httpResponse).toEqual(noContent())
   })
@@ -84,7 +88,7 @@ describe('LoadSurveys Controller', () => {
     const { sut, loadSurveysStub } = makeSut()
     jest.spyOn(loadSurveysStub, 'load').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
 
-    const httpResponse = await sut.handle({})
+    const httpResponse = await sut.handle(makeFakeAuthenticatedHttpRequest())
 
     expect(httpResponse).toEqual(serverError(new Error()))
   })
