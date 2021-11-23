@@ -6,6 +6,15 @@ import { Collection } from 'mongodb'
 
 let surveyCollection: Collection
 
+const makeFakeSurvey = (): any => ({
+  question: 'any_question',
+  answers: [{
+    image: 'any_image',
+    answer: 'any_answer'
+  }],
+  date: new Date()
+})
+
 const makeFakeSurveys = (): any[] => ([{
   question: 'any_question',
   answers: [{
@@ -29,7 +38,7 @@ const makeSut = (): SurveyMongoRepository => {
 describe('Account Mongo Repository', () => {
   beforeAll(async () => {
     MockDate.set(new Date())
-    await MongoHelper.connect(process.env.MONGO_URL as string)
+    await MongoHelper.connect(process.env.MONGO_URL)
   })
 
   afterAll(async () => {
@@ -99,6 +108,18 @@ describe('Account Mongo Repository', () => {
       const surveys = await sut.loadAll()
 
       expect(surveys).toEqual([])
+    })
+  })
+
+  describe('loadById()', () => {
+    test('Should load survey by id on success', async () => {
+      const { insertedId } = await surveyCollection.insertOne(makeFakeSurvey())
+      const sut = makeSut()
+      const surveyId = insertedId.toHexString()
+
+      const survey = await sut.loadById(surveyId)
+
+      expect(survey).toBeTruthy()
     })
   })
 })

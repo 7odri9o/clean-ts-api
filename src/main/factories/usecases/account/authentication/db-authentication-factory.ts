@@ -1,9 +1,9 @@
 import env from '@/main/config/env'
-import { DbAuthentication } from '@/data/usecases/authentication/db-authentication'
+import { DbAuthentication } from '@/data/usecases/account/authentication/db-authentication'
 import { BcryptAdapter } from '@/infra/criptography/bcrypt/bcrypt-adapter'
 import { JwtAdapter } from '@/infra/criptography/jwt/jwt-adapter'
 import { AccountMongoRepository } from '@/infra/db/mongodb/account/account-mongo-repository'
-import { Authentication } from '@/data/usecases/authentication/db-authentication-protocols'
+import { Authentication } from '@/data/usecases/account/authentication/db-authentication-protocols'
 
 export const makeDbAuthentication = (): Authentication => {
   const salt = 12
