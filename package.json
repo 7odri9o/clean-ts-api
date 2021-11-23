@@ -33,7 +33,7 @@
   "homepage": "https://gitlab.com/courses-rodrigo-rocha/udemy/manguinho/tdd-com-mango#readme",
   "_moduleAliases": {
     "@": "dist"
-  },  
+  },
   "devDependencies": {
     "@shelf/jest-mongodb": "^2.1.0",
     "@tsconfig/node14": "^1.0.1",

@@ -1,7 +1,11 @@
 import { HttpRequest } from '@/presentation/protocols'
 import { Middleware } from '@/presentation/protocols/middleware'
 
-import { Request, Response, NextFunction } from 'express'
+import {
+  Request,
+  Response,
+  NextFunction
+} from 'express'
 
 export const adaptMiddleware = (middleware: Middleware) => {
   return async (req: Request, res: Response, next: NextFunction) => {
@@ -10,12 +14,12 @@ export const adaptMiddleware = (middleware: Middleware) => {
     }
     const httpResponse = await middleware.handle(httpRequest)
     if (httpResponse.statusCode === 200) {
-      Object.assign(req, httpRequest.body)
+      Object.assign(req, httpResponse.body)
       next()
     } else {
       res.status(httpResponse.statusCode).json({
         error: httpResponse.body.message
-      })
+      }).end()
     }
   }
 }

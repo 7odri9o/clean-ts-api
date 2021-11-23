@@ -6,7 +6,7 @@
     "module":"commonjs",
     "target": "es2020",
     "esModuleInterop": true,
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "sourceMap": true,
     "rootDir": "src",
     "baseUrl": "src",
