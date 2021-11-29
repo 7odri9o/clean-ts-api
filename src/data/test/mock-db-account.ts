@@ -7,7 +7,7 @@ import { AddAccountParams } from '@/domain/usecases/account/add-account'
 
 export const mockAddAccountRepository = (): AddAccountRepository => {
   class AddAccountRepositoryStub implements AddAccountRepository {
-    async add (accountData: AddAccountParams): Promise<AccountModel> {
+    async add (data: AddAccountParams): Promise<AccountModel> {
       return new Promise(resolve => resolve({
         id: 'valid_id',
         name: 'valid_name',

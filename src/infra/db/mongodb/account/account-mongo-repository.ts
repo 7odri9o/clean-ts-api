@@ -8,10 +8,10 @@ import { AddAccountParams } from '@/domain/usecases/account/add-account'
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 
 export class AccountMongoRepository implements AddAccountRepository, LoadAccountByEmailRepository, UpdateAccessTokenRepository, LoadAccountByTokenRepository {
-  async add (accountData: AddAccountParams): Promise<AccountModel> {
+  async add (data: AddAccountParams): Promise<AccountModel> {
     const accountCollection = await MongoHelper.getCollection('accounts')
-    const { insertedId } = await accountCollection.insertOne(accountData)
-    return MongoHelper.map(Object.assign({}, accountData, { _id: insertedId }))
+    const { insertedId } = await accountCollection.insertOne(data)
+    return MongoHelper.map(Object.assign({}, data, { _id: insertedId }))
   }
 
   async loadByEmail (email: string): Promise<AccountModel | null> {
