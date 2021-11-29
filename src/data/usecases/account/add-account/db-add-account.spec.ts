@@ -35,18 +35,19 @@ describe('DbAddAccount Usecase', () => {
   test('Should call Hasher with correct password', async () => {
     const { sut, hasherStub, loadAccountByEmailRepositoryStub } = makeSut()
     const hashSpy = jest.spyOn(hasherStub, 'hash')
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockReturnValueOnce(new Promise(resolve => resolve(null)))
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(null)
 
     const params = getAddAccountParams()
     await sut.add(params)
 
-    expect(hashSpy).toHaveBeenCalledWith('any_password')
+    const expected = 'any_password'
+    expect(hashSpy).toHaveBeenCalledWith(expected)
   })
 
   test('Should throw if hasher throws', async () => {
     const { sut, hasherStub, loadAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockReturnValueOnce(new Promise(resolve => resolve(null)))
-    jest.spyOn(hasherStub, 'hash').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(null)
+    jest.spyOn(hasherStub, 'hash').mockRejectedValueOnce(new Error())
 
     const params = getAddAccountParams()
     const promise = sut.add(params)
@@ -56,23 +57,24 @@ describe('DbAddAccount Usecase', () => {
 
   test('Should call AddAccountRepository with correct values', async () => {
     const { sut, addAccountRepositoryStub, loadAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockReturnValueOnce(new Promise(resolve => resolve(null)))
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(null)
     const addSpy = jest.spyOn(addAccountRepositoryStub, 'add')
 
     const params = getAddAccountParams()
     await sut.add(params)
 
-    expect(addSpy).toHaveBeenCalledWith({
+    const expected = {
       name: 'any_name',
       email: 'any_email@email.com',
       password: 'hashed_password'
-    })
+    }
+    expect(addSpy).toHaveBeenCalledWith(expected)
   })
 
   test('Should throw if AddAccountRepository throws', async () => {
     const { sut, addAccountRepositoryStub, loadAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockReturnValueOnce(new Promise(resolve => resolve(null)))
-    jest.spyOn(addAccountRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(null)
+    jest.spyOn(addAccountRepositoryStub, 'add').mockRejectedValueOnce(new Error())
 
     const params = getAddAccountParams()
     const promise = sut.add(params)
@@ -82,7 +84,7 @@ describe('DbAddAccount Usecase', () => {
 
   test('Should return an account on success', async () => {
     const { sut, loadAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockReturnValueOnce(new Promise(resolve => resolve(null)))
+    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockResolvedValueOnce(null)
 
     const params = getAddAccountParams()
     const account = await sut.add(params)
@@ -97,13 +99,7 @@ describe('DbAddAccount Usecase', () => {
   })
 
   test('Should return null if LoadAccountByEmailRepository not returns null', async () => {
-    const { sut, loadAccountByEmailRepositoryStub } = makeSut()
-    jest.spyOn(loadAccountByEmailRepositoryStub, 'loadByEmail').mockReturnValueOnce(new Promise(resolve => resolve({
-      id: 'any_id',
-      name: 'any_name',
-      email: 'any_email@email.com',
-      password: 'hashed_password'
-    })))
+    const { sut } = makeSut()
 
     const params = getAddAccountParams()
     const account = await sut.add(params)
@@ -118,6 +114,7 @@ describe('DbAddAccount Usecase', () => {
     const params = getAddAccountParams()
     await sut.add(params)
 
-    expect(loadSpy).toHaveBeenCalledWith('any_email@email.com')
+    const expected = 'any_email@email.com'
+    expect(loadSpy).toHaveBeenCalledWith(expected)
   })
 })

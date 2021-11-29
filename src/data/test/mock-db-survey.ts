@@ -14,7 +14,7 @@ export const mockAddSurveyRepository = (): AddSurveyRepository => {
 }
 
 export const mockLoadSurveyByIdRepository = (): LoadSurveyByIdRepository => {
-  const surveyModel: SurveyModel = {
+  const survey: SurveyModel = {
     id: 'any_id',
     question: 'any_question',
     answers: [
@@ -27,14 +27,14 @@ export const mockLoadSurveyByIdRepository = (): LoadSurveyByIdRepository => {
   }
   class LoadSurveyByIdRepositoryStub implements LoadSurveyByIdRepository {
     async loadById (id: string): Promise<SurveyModel> {
-      return Promise.resolve(surveyModel)
+      return Promise.resolve(survey)
     }
   }
   return new LoadSurveyByIdRepositoryStub()
 }
 
 export const mockLoadSurveysRepository = (): LoadSurveysRepository => {
-  const surveyModelList: SurveyModel[] = [{
+  const surveys: SurveyModel[] = [{
     id: 'any_id',
     question: 'any_question',
     answers: [{
@@ -53,7 +53,7 @@ export const mockLoadSurveysRepository = (): LoadSurveysRepository => {
   }]
   class LoadSurveysRepositoryStub implements LoadSurveysRepository {
     async loadAll (): Promise<SurveyModel[]> {
-      return Promise.resolve(surveyModelList)
+      return Promise.resolve(surveys)
     }
   }
   return new LoadSurveysRepositoryStub()

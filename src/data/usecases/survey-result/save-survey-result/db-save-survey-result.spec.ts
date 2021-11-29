@@ -34,18 +34,19 @@ describe('DbSaveSurveyResult Usecase', () => {
   test('Should call SaveSurveyResultRepository with correct values', async () => {
     const { sut, saveSurveyResultRepositoryStub } = makeSut()
     const saveSpy = jest.spyOn(saveSurveyResultRepositoryStub, 'save')
-    const surveyResultData = getSaveSurveyResultParams()
 
-    await sut.save(surveyResultData)
+    const params = getSaveSurveyResultParams()
+    await sut.save(params)
 
-    expect(saveSpy).toHaveBeenCalledWith(surveyResultData)
+    expect(saveSpy).toHaveBeenCalledWith(params)
   })
 
   test('Should throw if SaveSurveyResultRepository throws', async () => {
     const { sut, saveSurveyResultRepositoryStub } = makeSut()
-    jest.spyOn(saveSurveyResultRepositoryStub, 'save').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    jest.spyOn(saveSurveyResultRepositoryStub, 'save').mockRejectedValueOnce(new Error())
 
-    const promise = sut.save(getSaveSurveyResultParams())
+    const params = getSaveSurveyResultParams()
+    const promise = sut.save(params)
 
     await expect(promise).rejects.toThrow()
   })
@@ -53,7 +54,8 @@ describe('DbSaveSurveyResult Usecase', () => {
   test('Should return a survey result on success', async () => {
     const { sut } = makeSut()
 
-    const surveyResult = await sut.save(getSaveSurveyResultParams())
+    const params = getSaveSurveyResultParams()
+    const surveyResult = await sut.save(params)
 
     const expected = {
       id: 'any_id',
