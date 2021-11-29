@@ -1,32 +1,24 @@
 import { SaveSurveyResultController } from './save-survey-result-controller'
-import { LoadSurveyById, SaveSurveyResult, SaveSurveyResultParams, SurveyModel, SurveyResultModel, HttpRequest } from './save-survey-result-controller-protocols'
+import { HttpRequest, LoadSurveyById, SaveSurveyResult, SurveyResultModel } from './save-survey-result-controller-protocols'
 import { forbidden, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import { InvalidParamError, ServerError } from '@/presentation/errors'
 
 import MockDate from 'mockdate'
 
+import { mockLoadSurveyById, mockSaveSurveyResult } from '@/presentation/test'
+
 const makeFakeRequest = (): HttpRequest => ({
   params: {
-    surveyId: 'valid_survey_id'
+    surveyId: 'any_survey_id'
   },
   body: {
-    answer: 'valid_answer'
+    answer: 'any_answer'
   },
-  accountId: 'valid_account_id'
-})
-
-const makeFakeSurvey = (): SurveyModel => ({
-  id: 'any_survey_id',
-  question: 'any_question',
-  answers: [{
-    answer: 'valid_answer',
-    image: 'valid_image'
-  }],
-  date: new Date()
+  accountId: 'any_account_id'
 })
 
 const makeFakeSurveyResult = (): SurveyResultModel => ({
-  id: 'valid_survey_result_id',
+  id: 'any_survey_result_id',
   surveyId: 'any_survey_id',
   accountId: 'any_account_id',
   answer: 'any_answer',
@@ -34,29 +26,11 @@ const makeFakeSurveyResult = (): SurveyResultModel => ({
 })
 
 const makeFakeSaveSurveyResult = (): any => ({
-  surveyId: 'valid_survey_id',
-  accountId: 'valid_account_id',
-  answer: 'valid_answer',
+  surveyId: 'any_survey_id',
+  accountId: 'any_account_id',
+  answer: 'any_answer',
   date: new Date()
 })
-
-const makeLoadSurveyById = (): LoadSurveyById => {
-  class LoadSurveyByIdStub implements LoadSurveyById {
-    async loadById (id: string): Promise<SurveyModel | null> {
-      return new Promise(resolve => resolve(makeFakeSurvey()))
-    }
-  }
-  return new LoadSurveyByIdStub()
-}
-
-const makeSaveSurveyResult = (): SaveSurveyResult => {
-  class SaveSurveyResultStub implements SaveSurveyResult {
-    async save (data: SaveSurveyResultParams): Promise<SurveyResultModel> {
-      return new Promise(resolve => resolve(makeFakeSurveyResult()))
-    }
-  }
-  return new SaveSurveyResultStub()
-}
 
 type SutTypes = {
   sut: SaveSurveyResultController
@@ -65,8 +39,8 @@ type SutTypes = {
 }
 
 const makeSut = (): SutTypes => {
-  const loadSurveyByIdStub = makeLoadSurveyById()
-  const saveSurveyResultStub = makeSaveSurveyResult()
+  const loadSurveyByIdStub = mockLoadSurveyById()
+  const saveSurveyResultStub = mockSaveSurveyResult()
   const sut = new SaveSurveyResultController(loadSurveyByIdStub, saveSurveyResultStub)
   return {
     sut,
@@ -90,7 +64,7 @@ describe('SaveSurveyResultController', () => {
 
     await sut.handle(makeFakeRequest())
 
-    expect(loadById).toHaveBeenCalledWith('valid_survey_id')
+    expect(loadById).toHaveBeenCalledWith('any_survey_id')
   })
 
   test('Should return 403 if LoadSurveyById returns null', async () => {
