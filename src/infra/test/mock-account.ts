@@ -1,16 +1,8 @@
 import { AddAccountParams } from '@/domain/usecases/account/add-account'
+import { addAccountParams, accessToken, roleAdmin } from './account-params'
 
-export const getAddAccountParams = (): AddAccountParams => ({
-  name: 'valid_name',
-  email: 'valid_email@email.com',
-  password: 'valid_password'
-})
+export const getAddAccountParams = (): AddAccountParams => addAccountParams
 
-export const mockAccountWithToken: any = Object.assign({}, getAddAccountParams(), {
-  accessToken: 'any_token'
-})
+export const mockAccountWithToken: any = Object.assign({}, addAccountParams, accessToken)
 
-export const mockAccountWithTokenAndRoleAdmin: any = Object.assign({}, getAddAccountParams(), {
-  accessToken: 'any_token',
-  role: 'admin'
-})
+export const mockAccountWithTokenAndRoleAdmin: any = Object.assign({}, addAccountParams, accessToken, roleAdmin)
