@@ -2,10 +2,7 @@ import { ok } from '@/presentation/helpers/http/http-helper'
 import { Controller, HttpRequest, HttpResponse } from '@/presentation/protocols'
 
 const httpResponse: HttpResponse = ok({
-  id: 'any_id',
-  name: 'any_name',
-  email: 'any_email@email.com',
-  password: 'hashed_password'
+  accessToken: 'any_token'
 })
 
 export const mockController = (): Controller => {
