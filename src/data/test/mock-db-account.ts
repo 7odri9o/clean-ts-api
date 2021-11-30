@@ -21,10 +21,13 @@ export const mockAddAccountRepository = (): AddAccountRepository => {
   return new AddAccountRepositoryStub()
 }
 
-export const mockLoadAccountByEmailRepository = (): LoadAccountByEmailRepository => {
+export const mockLoadAccountByEmailRepository = (isAccountNeeded: boolean): LoadAccountByEmailRepository => {
   class LoadAccountByEmailRepositoryStub implements LoadAccountByEmailRepository {
     async loadByEmail (email: string): Promise<AccountModel | null> {
-      return Promise.resolve(account)
+      if (isAccountNeeded) {
+        return Promise.resolve(account)
+      }
+      return Promise.resolve(null)
     }
   }
   return new LoadAccountByEmailRepositoryStub()
