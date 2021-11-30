@@ -1,21 +1,9 @@
 import { LoginController } from './login-controller'
-import { Authentication, AuthenticationParams, HttpRequest, Validation } from './login-controller-protocols'
+import { Authentication, Validation } from './login-controller-protocols'
 import { MissingParamError, ServerError } from '@/presentation/errors'
 import { badRequest, ok, serverError, unauthorized } from '@/presentation/helpers/http/http-helper'
 
-import { mockAuthentication, mockValidation } from '@/presentation/test'
-
-const makeFakeAuthentication = (): AuthenticationParams => ({
-  email: 'any_email@email.com',
-  password: 'any_password'
-})
-
-const makeFakeRequest = (): HttpRequest => ({
-  body: {
-    email: 'any_email@email.com',
-    password: 'any_password'
-  }
-})
+import { mockAuthentication, mockValidation, authenticationHttpRequest } from '@/presentation/test'
 
 type SutTypes = {
   sut: LoginController
@@ -39,57 +27,69 @@ describe('Login Controller', () => {
     const { sut, authenticationStub } = makeSut()
     const authSpy = jest.spyOn(authenticationStub, 'auth')
 
-    await sut.handle(makeFakeRequest())
+    const httpRequest = authenticationHttpRequest
+    await sut.handle(httpRequest)
 
-    expect(authSpy).toHaveBeenCalledWith(makeFakeAuthentication())
+    const expected = {
+      email: 'any_email@email.com',
+      password: 'any_password'
+    }
+    expect(authSpy).toHaveBeenCalledWith(expected)
   })
 
   test('Should return 401 if invalid credentials are provided', async () => {
     const { sut, authenticationStub } = makeSut()
-    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(new Promise(resolve => resolve('')))
+    jest.spyOn(authenticationStub, 'auth').mockResolvedValueOnce('')
 
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const httpRequest = authenticationHttpRequest
+    const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(unauthorized())
+    const expected = unauthorized()
+    expect(httpResponse).toEqual(expected)
   })
 
   test('Should return 500 Authentication throws', async () => {
     const { sut, authenticationStub } = makeSut()
-    jest.spyOn(authenticationStub, 'auth').mockImplementationOnce(async () => {
-      return new Promise((resolve, reject) => reject(new Error()))
-    })
+    jest.spyOn(authenticationStub, 'auth').mockRejectedValueOnce(new Error())
 
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const httpRequest = authenticationHttpRequest
+    const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(serverError(new ServerError('')))
+    const expected = serverError(new ServerError(''))
+    expect(httpResponse).toEqual(expected)
   })
 
   test('Should return 200 if valid credentials are provided', async () => {
     const { sut } = makeSut()
 
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const httpRequest = authenticationHttpRequest
+    const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(ok({
+    const expected = ok({
       accessToken: 'any_token'
-    }))
+    })
+    expect(httpResponse).toEqual(expected)
   })
 
   test('Should call Validation with correct values', async () => {
     const { sut, validationStub } = makeSut()
     const validateSpy = jest.spyOn(validationStub, 'validate')
-    const httpRequest = makeFakeRequest()
 
+    const httpRequest = authenticationHttpRequest
     await sut.handle(httpRequest)
 
-    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
+    const expected = httpRequest.body
+    expect(validateSpy).toHaveBeenCalledWith(expected)
   })
 
   test('Should return 400 if Validation returns an error', async () => {
     const { sut, validationStub } = makeSut()
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(new MissingParamError('any_field'))
 
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const httpRequest = authenticationHttpRequest
+    const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
+    const expected = badRequest(new MissingParamError('any_field'))
+    expect(httpResponse).toEqual(expected)
   })
 })

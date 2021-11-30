@@ -1,15 +1,9 @@
 import { AuthMiddleware } from './auth-middleware'
-import { HttpRequest, LoadAccountByToken } from './auth-middleware-protocols'
+import { LoadAccountByToken } from './auth-middleware-protocols'
 import { forbidden, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import { AccessDeniedError } from '@/presentation/errors'
 
-import { mockLoadAccountByToken } from '@/presentation/test'
-
-const makeFakeRequest = (): HttpRequest => ({
-  headers: {
-    'x-access-token': 'any_token'
-  }
-})
+import { authHttpRequest, mockLoadAccountByToken } from '@/presentation/test'
 
 type SutTypes = {
   sut: AuthMiddleware
@@ -28,12 +22,13 @@ const makeSut = (role?: string): SutTypes => {
 describe('Auth Middleware', () => {
   test('Should return 403 if no x-access-token exists in headers', async () => {
     const { sut } = makeSut()
-    const httpRequest = makeFakeRequest()
+    const httpRequest = authHttpRequest()
     httpRequest.headers = {}
 
     const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+    const expected = forbidden(new AccessDeniedError())
+    expect(httpResponse).toEqual(expected)
   })
 
   test('Should call LoadAccountByToken with correct accessToken', async () => {
@@ -41,34 +36,45 @@ describe('Auth Middleware', () => {
     const { sut, loadAccountByTokenStub } = makeSut(role)
     const loadSpy = jest.spyOn(loadAccountByTokenStub, 'load')
 
-    await sut.handle(makeFakeRequest())
+    const httpRequest = authHttpRequest()
+    await sut.handle(httpRequest)
 
-    expect(loadSpy).toHaveBeenCalledWith('any_token', role)
+    const expected = {
+      accessToken: 'any_token',
+      role
+    }
+    expect(loadSpy).toHaveBeenCalledWith(expected.accessToken, expected.role)
   })
 
   test('Should return 403 if LoadAccountByToken returns null', async () => {
     const { sut, loadAccountByTokenStub } = makeSut()
-    jest.spyOn(loadAccountByTokenStub, 'load').mockReturnValueOnce(new Promise(resolve => resolve(null)))
+    jest.spyOn(loadAccountByTokenStub, 'load').mockResolvedValueOnce(null)
 
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const httpRequest = authHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(forbidden(new AccessDeniedError()))
+    const expected = forbidden(new AccessDeniedError())
+    expect(httpResponse).toEqual(expected)
   })
 
   test('Should return 200 if LoadAccountByToken returns an account', async () => {
     const { sut } = makeSut()
 
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const httpRequest = authHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(ok({ accountId: 'any_id' }))
+    const expected = ok({ accountId: 'any_id' })
+    expect(httpResponse).toEqual(expected)
   })
 
   test('Should return 500 if LoadAccountByToken throws', async () => {
     const { sut, loadAccountByTokenStub } = makeSut()
-    jest.spyOn(loadAccountByTokenStub, 'load').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    jest.spyOn(loadAccountByTokenStub, 'load').mockRejectedValueOnce(new Error())
 
-    const httpResponse = await sut.handle(makeFakeRequest())
+    const httpRequest = authHttpRequest()
+    const httpResponse = await sut.handle(httpRequest)
 
-    expect(httpResponse).toEqual(serverError(new Error()))
+    const expected = serverError(new Error())
+    expect(httpResponse).toEqual(expected)
   })
 })
