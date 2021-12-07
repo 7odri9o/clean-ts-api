@@ -9,21 +9,24 @@ describe('Compare Fields Validation', () => {
   test('Should return a InvalidParamError if validation fails', () => {
     const sut = makeSut()
 
-    const error = sut.validate({
+    const input = {
       field: 'any_value',
       fieldToCompare: 'wrong_value'
-    })
+    }
+    const error = sut.validate(input)
 
-    expect(error).toEqual(new InvalidParamError('fieldToCompare'))
+    const expected = new InvalidParamError('fieldToCompare')
+    expect(error).toEqual(expected)
   })
 
   test('Should not return anything if validation succeeds', () => {
     const sut = makeSut()
 
-    const error = sut.validate({
+    const input = {
       field: 'any_value',
       fieldToCompare: 'any_value'
-    })
+    }
+    const error = sut.validate(input)
 
     expect(error).toBeFalsy()
   })

@@ -2,14 +2,7 @@ import { EmailValidation } from './email-validation'
 import { InvalidParamError } from '@/presentation/errors'
 import { EmailValidator } from '@/presentation/protocols'
 
-const makeEmailValidator = (): EmailValidator => {
-  class EmailValidatorStub implements EmailValidator {
-    isValid (email: string): boolean {
-      return true
-    }
-  }
-  return new EmailValidatorStub()
-}
+import { mockEmailValidator, throwError } from '@/validation/test'
 
 type SutTypes = {
   sut: EmailValidation
@@ -17,7 +10,7 @@ type SutTypes = {
 }
 
 const makeSut = (): SutTypes => {
-  const emailValidatorStub = makeEmailValidator()
+  const emailValidatorStub = mockEmailValidator()
   const sut = new EmailValidation('email', emailValidatorStub)
   return {
     sut,
@@ -30,25 +23,31 @@ describe('Email Validation', () => {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'isValid').mockReturnValueOnce(false)
 
-    const error = sut.validate({ email: 'any_email@email.com' })
+    const input = {
+      email: 'any_email@email.com'
+    }
+    const error = sut.validate(input)
 
-    expect(error).toEqual(new InvalidParamError('email'))
+    const expected = new InvalidParamError('email')
+    expect(error).toEqual(expected)
   })
 
   test('Should call EmailValidator with correct email', () => {
     const { sut, emailValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
 
-    sut.validate({ email: 'any_email@email.com' })
+    const input = {
+      email: 'any_email@email.com'
+    }
+    sut.validate(input)
 
-    expect(isValidSpy).toHaveBeenCalledWith('any_email@email.com')
+    const expected = 'any_email@email.com'
+    expect(isValidSpy).toHaveBeenCalledWith(expected)
   })
 
   test('Should throw if EmailValidator throws', () => {
     const { sut, emailValidatorStub } = makeSut()
-    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
-      throw new Error()
-    })
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(throwError)
 
     const isValid = sut.validate
 

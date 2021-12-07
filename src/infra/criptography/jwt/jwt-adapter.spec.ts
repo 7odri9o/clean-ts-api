@@ -2,13 +2,17 @@ import { JwtAdapter } from './jwt-adapter'
 
 import jwt from 'jsonwebtoken'
 
+import { throwError } from '@/infra/test'
+
 jest.mock('jsonwebtoken', () => ({
   async sign (): Promise<string> {
-    return new Promise(resolve => resolve('any_token'))
+    const token = 'any_token'
+    return new Promise(resolve => resolve(token))
   },
 
   async verify (): Promise<string> {
-    return new Promise(resolve => resolve('any_value'))
+    const value = 'any_value'
+    return new Promise(resolve => resolve(value))
   }
 }))
 
@@ -22,28 +26,36 @@ describe('Jwt Adapter', () => {
       const sut = makeSut()
       const signSpy = jest.spyOn(jwt, 'sign')
 
-      await sut.encrypt('any_id')
+      const value = 'any_id'
+      await sut.encrypt(value)
 
-      expect(signSpy).toHaveBeenCalledWith({ id: 'any_id' }, 'secret')
+      const expected = {
+        payload: {
+          id: 'any_id'
+        },
+        secret: 'secret'
+      }
+      expect(signSpy).toHaveBeenCalledWith(expected.payload, expected.secret)
     })
 
     test('Should return a token on sign success', async () => {
       const sut = makeSut()
 
-      const accessToken = await sut.encrypt('any_id')
+      const value = 'any_id'
+      const accessToken = await sut.encrypt(value)
 
-      expect(accessToken).toBe('any_token')
+      const expected = 'any_token'
+      expect(accessToken).toBe(expected)
     })
 
     test('Should throw if sign throws', async () => {
       const sut = makeSut()
-      jest.spyOn(jwt, 'sign').mockImplementationOnce(() => {
-        throw new Error()
-      })
+      jest.spyOn(jwt, 'sign').mockImplementationOnce(throwError)
 
-      const accessToken = sut.encrypt('any_id')
+      const value = 'any_id'
+      const promise = sut.encrypt(value)
 
-      await expect(accessToken).rejects.toThrow()
+      await expect(promise).rejects.toThrow()
     })
   })
 
@@ -52,28 +64,34 @@ describe('Jwt Adapter', () => {
       const sut = makeSut()
       const verifySpy = jest.spyOn(jwt, 'verify')
 
-      await sut.decrypt('any_token')
+      const token = 'any_token'
+      await sut.decrypt(token)
 
-      expect(verifySpy).toHaveBeenCalledWith('any_token', 'secret')
+      const expected = {
+        token: 'any_token',
+        secret: 'secret'
+      }
+      expect(verifySpy).toHaveBeenCalledWith(expected.token, expected.secret)
     })
 
     test('Should return a decrypted value on verify success', async () => {
       const sut = makeSut()
 
-      const value = await sut.decrypt('any_token')
+      const token = 'any_token'
+      const value = await sut.decrypt(token)
 
-      expect(value).toBe('any_value')
+      const expected = 'any_value'
+      expect(value).toBe(expected)
     })
 
     test('Should throw if verify throws', async () => {
       const sut = makeSut()
-      jest.spyOn(jwt, 'verify').mockImplementationOnce(() => {
-        throw new Error()
-      })
+      jest.spyOn(jwt, 'verify').mockImplementationOnce(throwError)
 
-      const accessToken = sut.decrypt('any_token')
+      const token = 'any_token'
+      const promise = sut.decrypt(token)
 
-      await expect(accessToken).rejects.toThrow()
+      await expect(promise).rejects.toThrow()
     })
   })
 })

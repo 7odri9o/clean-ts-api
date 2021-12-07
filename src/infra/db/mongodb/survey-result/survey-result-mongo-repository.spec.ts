@@ -4,46 +4,37 @@ import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 import MockDate from 'mockdate'
 import { Collection } from 'mongodb'
 
+import { getAddSurveyParams } from '@/infra/test'
+
 let accountCollection: Collection
 let surveyCollection: Collection
 let surveyResultCollection: Collection
 
-const makeFakeSurvey = (): any => ({
-  question: 'any_question',
-  answers: [{
-    image: 'any_image',
-    answer: 'any_answer'
-  }],
-  date: new Date()
-})
+const mockSurvey = async (): Promise<string> => {
+  const data = getAddSurveyParams()
+  const { insertedId } = await surveyResultCollection.insertOne(data)
+  return insertedId.toHexString()
+}
 
-const makeFakeAccount = (): any => ({
-  name: 'valid_name',
-  email: 'valid_email@email.com',
-  password: 'valid_password'
-})
-
-const makeFakeSurveyResult = (surveyId: string, accountId: string): any => {
-  return {
+const mockSurveyResult = async (surveyId: string, accountId: string): Promise<string> => {
+  const data = {
     surveyId,
     accountId,
     answer: 'any_answer',
     date: new Date()
   }
-}
-
-const getSurveyId = async (): Promise<string> => {
-  const { insertedId } = await surveyResultCollection.insertOne(makeFakeSurvey())
+  const { insertedId } = await surveyResultCollection.insertOne(data)
   return insertedId.toHexString()
 }
 
-const getSurveyResultId = async (surveyId: string, accountId: string): Promise<string> => {
-  const { insertedId } = await surveyResultCollection.insertOne(makeFakeSurveyResult(surveyId, accountId))
-  return insertedId.toHexString()
-}
-
-const getAccountId = async (): Promise<string> => {
-  const { insertedId } = await accountCollection.insertOne(makeFakeAccount())
+const mockAccount = async (): Promise<string> => {
+  const data = {
+    id: 'any_id',
+    name: 'valid_name',
+    email: 'valid_email@email.com',
+    password: 'hashed_password'
+  }
+  const { insertedId } = await accountCollection.insertOne(data)
   return insertedId.toHexString()
 }
 
@@ -73,44 +64,38 @@ describe('Account Mongo Repository', () => {
 
   describe('save()', () => {
     test('Should add a survey result if its new', async () => {
-      const surveyId = await getSurveyId()
-      const accountId = await getAccountId()
       const sut = makeSut()
+      const surveyId = await mockSurvey()
+      const accountId = await mockAccount()
 
-      const surveyResult = await sut.save({
+      const data = {
         surveyId,
         accountId,
         answer: 'any_answer',
         date: new Date()
-      })
+      }
+      const surveyResult = await sut.save(data)
 
       expect(surveyResult).toBeTruthy()
-      expect(surveyResult?.id).toBeTruthy()
-      expect(surveyResult?.surveyId).toBeTruthy()
-      expect(surveyResult?.accountId).toBeTruthy()
-      expect(surveyResult?.date).toBeTruthy()
-      expect(surveyResult?.answer).toBe('any_answer')
     })
 
     test('Should update a survey result if exists', async () => {
-      const surveyId = await getSurveyId()
-      const accountId = await getAccountId()
-      const surveyResultId = await getSurveyResultId(surveyId, accountId)
       const sut = makeSut()
+      const surveyId = await mockSurvey()
+      const accountId = await mockAccount()
+      await mockSurveyResult(surveyId, accountId)
 
-      const surveyResult = await sut.save({
+      const data = {
         surveyId,
         accountId,
         answer: 'other_answer',
         date: new Date()
-      })
+      }
+      const surveyResult = await sut.save(data)
 
+      const expected = 'other_answer'
       expect(surveyResult).toBeTruthy()
-      expect(surveyResult?.id).toEqual(surveyResultId)
-      expect(surveyResult?.surveyId).toBeTruthy()
-      expect(surveyResult?.accountId).toBeTruthy()
-      expect(surveyResult?.date).toBeTruthy()
-      expect(surveyResult?.answer).toBe('other_answer')
+      expect(surveyResult?.answer).toBe(expected)
     })
   })
 })
