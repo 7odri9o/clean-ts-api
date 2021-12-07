@@ -3,7 +3,7 @@
   "display": "Node 14",
   "compilerOptions": {
     "outDir": "dist",
-    "module":"commonjs",
+    "module": "commonjs",
     "target": "es2020",
     "esModuleInterop": true,
     "strictNullChecks": false,
@@ -17,5 +17,6 @@
   "include": [
     "src"
   ],
-  "exclude": []
+  "exclude": [],
+  "files": ["global.d.ts"]
 }
