@@ -1,3 +1,8 @@
-export * from './login-path'
-export * from './signup-path'
-export * from './surveys-path'
+import { loginPath, signUpPath } from './login'
+import { surveysPath } from './surveys'
+
+export const paths = {
+  '/login': loginPath,
+  '/signup': signUpPath,
+  '/surveys': surveysPath
+}
