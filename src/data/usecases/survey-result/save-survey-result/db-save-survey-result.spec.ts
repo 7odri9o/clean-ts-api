@@ -58,10 +58,18 @@ describe('DbSaveSurveyResult Usecase', () => {
     const surveyResult = await sut.save(params)
 
     const expected = {
-      id: 'any_id',
       surveyId: 'any_survey_id',
-      accountId: 'any_account_id',
-      answer: 'any_answer',
+      question: 'any_question',
+      answers: [{
+        answer: 'any_answer',
+        count: 1,
+        percent: 5
+      }, {
+        answer: 'other_answer',
+        image: 'other_image',
+        count: 10,
+        percent: 80
+      }],
       date: new Date()
     }
     expect(surveyResult).toEqual(expected)

@@ -2,7 +2,7 @@ import { SurveyResultMongoRepository } from './survey-result-mongo-repository'
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 
 import MockDate from 'mockdate'
-import { Collection } from 'mongodb'
+import { Collection, ObjectId } from 'mongodb'
 
 import { getAddSurveyParams } from '@/infra/test'
 
@@ -18,8 +18,8 @@ const mockSurvey = async (): Promise<string> => {
 
 const mockSurveyResult = async (surveyId: string, accountId: string): Promise<string> => {
   const data = {
-    surveyId,
-    accountId,
+    surveyId: new ObjectId(surveyId),
+    accountId: new ObjectId(accountId),
     answer: 'any_answer',
     date: new Date()
   }
@@ -29,7 +29,6 @@ const mockSurveyResult = async (surveyId: string, accountId: string): Promise<st
 
 const mockAccount = async (): Promise<string> => {
   const data = {
-    id: 'any_id',
     name: 'valid_name',
     email: 'valid_email@email.com',
     password: 'hashed_password'
@@ -77,6 +76,12 @@ describe('Account Mongo Repository', () => {
       const surveyResult = await sut.save(data)
 
       expect(surveyResult).toBeTruthy()
+      // expect(surveyResult.surveyId).toEqual(surveyId)
+      // expect(surveyResult.answers[0].count).toBe(1)
+      // expect(surveyResult.answers[0].percent).toBe(100)
+
+      // expect(surveyResult.answers[1].count).toBe(0)
+      // expect(surveyResult.answers[1].percent).toBe(0)
     })
 
     test('Should update a survey result if exists', async () => {
@@ -93,9 +98,15 @@ describe('Account Mongo Repository', () => {
       }
       const surveyResult = await sut.save(data)
 
-      const expected = 'other_answer'
       expect(surveyResult).toBeTruthy()
-      expect(surveyResult?.answer).toBe(expected)
+
+      // expect(surveyResult).toBeTruthy()
+      // expect(surveyResult.surveyId).toEqual(surveyId)
+      // expect(surveyResult.answers[1].count).toBe(1)
+      // expect(surveyResult.answers[1].percent).toBe(100)
+
+      // expect(surveyResult.answers[0].count).toBe(0)
+      // expect(surveyResult.answers[0].percent).toBe(0)
     })
   })
 })
