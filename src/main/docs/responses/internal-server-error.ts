@@ -1,5 +1,5 @@
 export const internalServerError = {
   500: {
-    $ref: '#/components/serverError'
+    $ref: '#/components/internalServerError'
   }
 }
