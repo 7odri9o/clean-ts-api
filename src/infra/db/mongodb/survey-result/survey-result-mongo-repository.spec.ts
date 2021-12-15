@@ -12,7 +12,7 @@ let surveyResultCollection: Collection
 
 const mockSurvey = async (): Promise<string> => {
   const data = getAddSurveyParams()
-  const { insertedId } = await surveyResultCollection.insertOne(data)
+  const { insertedId } = await surveyCollection.insertOne(data)
   return insertedId.toHexString()
 }
 
@@ -75,14 +75,23 @@ describe('Account Mongo Repository', () => {
       }
       const surveyResult = await sut.save(data)
 
-      expect(surveyResult).toBeTruthy()
-      // expect(surveyResult.surveyId).toEqual(surveyId)
-      // expect(surveyResult.answers[0].count).toBe(1)
-      // expect(surveyResult.answers[0].percent).toBe(100)
-
-      // expect(surveyResult.answers[1].count).toBe(0)
-      // expect(surveyResult.answers[1].percent).toBe(0)
-    })
+      const expected = {
+        surveyId,
+        question: 'any_question',
+        date: new Date(),
+        answers: [{
+          answer: 'any_answer',
+          image: 'any_image',
+          count: 1,
+          percent: 100
+        }, {
+          answer: 'other_answer',
+          count: 0,
+          percent: 0
+        }]
+      }
+      expect(surveyResult).toEqual(expected)
+    }, 300000)
 
     test('Should update a survey result if exists', async () => {
       const sut = makeSut()
@@ -98,15 +107,23 @@ describe('Account Mongo Repository', () => {
       }
       const surveyResult = await sut.save(data)
 
-      expect(surveyResult).toBeTruthy()
+      const expected = {
+        surveyId,
+        question: 'any_question',
+        date: new Date(),
+        answers: [{
+          answer: 'other_answer',
+          count: 1,
+          percent: 100
+        }, {
+          answer: 'any_answer',
+          image: 'any_image',
+          count: 0,
+          percent: 0
+        }]
+      }
 
-      // expect(surveyResult).toBeTruthy()
-      // expect(surveyResult.surveyId).toEqual(surveyId)
-      // expect(surveyResult.answers[1].count).toBe(1)
-      // expect(surveyResult.answers[1].percent).toBe(100)
-
-      // expect(surveyResult.answers[0].count).toBe(0)
-      // expect(surveyResult.answers[0].percent).toBe(0)
-    })
+      expect(surveyResult).toEqual(expected)
+    }, 300000)
   })
 })
