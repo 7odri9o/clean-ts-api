@@ -93,7 +93,7 @@ describe('Account Mongo Repository', () => {
       expect(surveyResult).toEqual(expected)
     }, 300000)
 
-    test('Should update a survey result if exists', async () => {
+    test('Should update a survey result if it exists', async () => {
       const sut = makeSut()
       const surveyId = await mockSurvey()
       const accountId = await mockAccount()
