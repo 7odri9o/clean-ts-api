@@ -1,23 +1,27 @@
-import MockDate from 'mockdate'
-
 import { DbSaveSurveyResult } from './db-save-survey-result'
-import { SaveSurveyResultRepository } from './db-save-survey-result-protocols'
+import { LoadSurveyResultRepository, SaveSurveyResultRepository } from './db-save-survey-result-protocols'
 
 import {
   mockSaveSurveyResultRepository,
+  mockLoadSurveyResultRepository,
   getSaveSurveyResultParams
 } from '@/data/test'
 
+import MockDate from 'mockdate'
+
 type SutTypes = {
   saveSurveyResultRepositoryStub: SaveSurveyResultRepository
+  loadSurveyResultRepositoryStub: LoadSurveyResultRepository
   sut: DbSaveSurveyResult
 }
 
 const makeSut = (): SutTypes => {
   const saveSurveyResultRepositoryStub = mockSaveSurveyResultRepository()
-  const sut = new DbSaveSurveyResult(saveSurveyResultRepositoryStub)
+  const loadSurveyResultRepositoryStub = mockLoadSurveyResultRepository()
+  const sut = new DbSaveSurveyResult(saveSurveyResultRepositoryStub, loadSurveyResultRepositoryStub)
   return {
     saveSurveyResultRepositoryStub,
+    loadSurveyResultRepositoryStub,
     sut
   }
 }
@@ -49,6 +53,27 @@ describe('DbSaveSurveyResult Usecase', () => {
     const promise = sut.save(params)
 
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should throw if LoadSurveyResultRepository throws', async () => {
+    const { sut, loadSurveyResultRepositoryStub } = makeSut()
+    jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockRejectedValueOnce(new Error())
+
+    const params = getSaveSurveyResultParams()
+    const promise = sut.save(params)
+
+    await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call LoadSurveyResultRepository with correct values', async () => {
+    const { sut, loadSurveyResultRepositoryStub } = makeSut()
+    const loadBySurveyIdSpy = jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId')
+
+    const params = getSaveSurveyResultParams()
+    await sut.save(params)
+
+    const expected = 'any_survey_id'
+    expect(loadBySurveyIdSpy).toHaveBeenCalledWith(expected)
   })
 
   test('Should return a survey result on success', async () => {

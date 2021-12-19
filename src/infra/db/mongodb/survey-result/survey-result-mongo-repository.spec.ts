@@ -83,24 +83,14 @@ describe('Account Mongo Repository', () => {
         answer: 'any_answer',
         date: new Date()
       }
-      const surveyResult = await sut.save(data)
+      await sut.save(data)
 
-      const expected = {
-        surveyId,
-        question: 'any_question',
-        date: new Date(),
-        answers: [{
-          answer: 'any_answer',
-          image: 'any_image',
-          count: 1,
-          percent: 100
-        }, {
-          answer: 'other_answer',
-          count: 0,
-          percent: 0
-        }]
-      }
-      expect(surveyResult).toEqual(expected)
+      const surveyResult = await surveyResultCollection.findOne({
+        surveyId: new ObjectId(surveyId),
+        accountId: new ObjectId(accountId)
+      })
+
+      expect(surveyResult).toBeTruthy()
     }, 300000)
 
     test('Should update a survey result if it exists', async () => {
@@ -115,25 +105,14 @@ describe('Account Mongo Repository', () => {
         answer: 'other_answer',
         date: new Date()
       }
-      const surveyResult = await sut.save(data)
+      await sut.save(data)
 
-      const expected = {
-        surveyId,
-        question: 'any_question',
-        date: new Date(),
-        answers: [{
-          answer: 'other_answer',
-          count: 1,
-          percent: 100
-        }, {
-          answer: 'any_answer',
-          image: 'any_image',
-          count: 0,
-          percent: 0
-        }]
-      }
+      const surveyResult = await surveyResultCollection.find({
+        surveyId: new ObjectId(surveyId),
+        accountId: new ObjectId(accountId)
+      }).toArray()
 
-      expect(surveyResult).toEqual(expected)
+      expect(surveyResult.length).toBe(1)
     }, 300000)
   })
 
