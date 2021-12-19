@@ -51,6 +51,40 @@ describe('DbLoadSurveyResult UseCase', () => {
     await expect(promise).rejects.toThrow()
   })
 
+  test('Should call LoadSurveyByIdRepository if LoadSurveyResultRepository returns null', async () => {
+    const { sut, loadSurveyResultRepositoryStub, loadSurveyByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockResolvedValueOnce(null)
+    const loadByIdSpy = jest.spyOn(loadSurveyByIdRepositoryStub, 'loadById')
+
+    const surveyId = 'any_survey_id'
+    await sut.loadBySurveyId(surveyId)
+
+    const expected = 'any_survey_id'
+    expect(loadByIdSpy).toHaveBeenCalledWith(expected)
+  })
+
+  test(`Should return survey result with all answers with count and percent zero
+    if LoadSurveyResultRepository returns null`, async () => {
+    const { sut, loadSurveyResultRepositoryStub } = makeSut()
+    jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockResolvedValueOnce(null)
+
+    const surveyId = 'any_survey_id'
+    const surveyResult = await sut.loadBySurveyId(surveyId)
+
+    const expected = {
+      surveyId: 'any_id',
+      question: 'any_question',
+      date: new Date(),
+      answers: [{
+        answer: 'any_answer',
+        image: 'any_image',
+        count: 0,
+        percent: 0
+      }]
+    }
+    expect(surveyResult).toEqual(expected)
+  })
+
   test('Should return surveyResult on success', async () => {
     const { sut } = makeSut()
 
@@ -73,17 +107,5 @@ describe('DbLoadSurveyResult UseCase', () => {
       date: new Date()
     }
     expect(surveyResult).toEqual(expected)
-  })
-
-  test('Should call LoadSurveyByIdRepository if LoadSurveyResultRepository returns null', async () => {
-    const { sut, loadSurveyResultRepositoryStub, loadSurveyByIdRepositoryStub } = makeSut()
-    jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockResolvedValueOnce(null)
-    const loadByIdSpy = jest.spyOn(loadSurveyByIdRepositoryStub, 'loadById')
-
-    const surveyId = 'any_survey_id'
-    await sut.loadBySurveyId(surveyId)
-
-    const expected = 'any_survey_id'
-    expect(loadByIdSpy).toHaveBeenCalledWith(expected)
   })
 })
