@@ -1,19 +1,22 @@
-import { LoadSurveyResultRepository } from './db-load-survey-result-protocols'
+import { LoadSurveyByIdRepository, LoadSurveyResultRepository } from './db-load-survey-result-protocols'
 import { DbLoadSurveyResult } from './db-load-survey-result'
-import { mockLoadSurveyResultRepository } from '@/data/test'
+import { mockLoadSurveyByIdRepository, mockLoadSurveyResultRepository } from '@/data/test'
 
 import MockDate from 'mockdate'
 
 type SutTypes = {
   loadSurveyResultRepositoryStub: LoadSurveyResultRepository
+  loadSurveyByIdRepositoryStub: LoadSurveyByIdRepository
   sut: DbLoadSurveyResult
 }
 
 const makeSut = (): SutTypes => {
   const loadSurveyResultRepositoryStub = mockLoadSurveyResultRepository()
-  const sut = new DbLoadSurveyResult(loadSurveyResultRepositoryStub)
+  const loadSurveyByIdRepositoryStub = mockLoadSurveyByIdRepository()
+  const sut = new DbLoadSurveyResult(loadSurveyByIdRepositoryStub, loadSurveyResultRepositoryStub)
   return {
     loadSurveyResultRepositoryStub,
+    loadSurveyByIdRepositoryStub,
     sut
   }
 }
