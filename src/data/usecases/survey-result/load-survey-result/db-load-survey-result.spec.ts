@@ -5,8 +5,8 @@ import { mockLoadSurveyByIdRepository, mockLoadSurveyResultRepository } from '@/
 import MockDate from 'mockdate'
 
 type SutTypes = {
-  loadSurveyResultRepositoryStub: LoadSurveyResultRepository
   loadSurveyByIdRepositoryStub: LoadSurveyByIdRepository
+  loadSurveyResultRepositoryStub: LoadSurveyResultRepository
   sut: DbLoadSurveyResult
 }
 
@@ -15,8 +15,8 @@ const makeSut = (): SutTypes => {
   const loadSurveyByIdRepositoryStub = mockLoadSurveyByIdRepository()
   const sut = new DbLoadSurveyResult(loadSurveyByIdRepositoryStub, loadSurveyResultRepositoryStub)
   return {
-    loadSurveyResultRepositoryStub,
     loadSurveyByIdRepositoryStub,
+    loadSurveyResultRepositoryStub,
     sut
   }
 }
@@ -73,5 +73,17 @@ describe('DbLoadSurveyResult UseCase', () => {
       date: new Date()
     }
     expect(surveyResult).toEqual(expected)
+  })
+
+  test('Should call LoadSurveyByIdRepository if LoadSurveyResultRepository returns null', async () => {
+    const { sut, loadSurveyResultRepositoryStub, loadSurveyByIdRepositoryStub } = makeSut()
+    jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockResolvedValueOnce(null)
+    const loadByIdSpy = jest.spyOn(loadSurveyByIdRepositoryStub, 'loadById')
+
+    const surveyId = 'any_survey_id'
+    await sut.loadBySurveyId(surveyId)
+
+    const expected = 'any_survey_id'
+    expect(loadByIdSpy).toHaveBeenCalledWith(expected)
   })
 })
