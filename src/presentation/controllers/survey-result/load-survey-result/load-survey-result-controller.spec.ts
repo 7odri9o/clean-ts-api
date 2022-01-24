@@ -8,13 +8,17 @@ const makeFakeRequest = (): HttpRequest => ({
   }
 })
 
+const makeLoadSurveyByIdStub = (): LoadSurveyById => {
+  return mockLoadSurveyById()
+}
+
 type SutTypes = {
   sut: LoadSurveyResultController
   loadSurveyByIdStub: LoadSurveyById
 }
 
 const makeSut = (): SutTypes => {
-  const loadSurveyByIdStub = mockLoadSurveyById()
+  const loadSurveyByIdStub = makeLoadSurveyByIdStub()
   const sut = new LoadSurveyResultController(loadSurveyByIdStub)
   return {
     sut,
