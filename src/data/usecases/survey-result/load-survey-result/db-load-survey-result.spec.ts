@@ -32,13 +32,13 @@ describe('DbLoadSurveyResult UseCase', () => {
 
   test('Should call LoadSurveyResultRepository', async () => {
     const { sut, loadSurveyResultRepositoryStub } = makeSut()
-    const loadBySurveyIdSpy = jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId')
+    const loadSpy = jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId')
 
     const surveyId = 'any_survey_id'
-    await sut.loadBySurveyId(surveyId)
+    await sut.load(surveyId)
 
     const expected = 'any_survey_id'
-    expect(loadBySurveyIdSpy).toHaveBeenCalledWith(expected)
+    expect(loadSpy).toHaveBeenCalledWith(expected)
   })
 
   test('Should throw if LoadSurveyResultRepository throws', async () => {
@@ -46,7 +46,7 @@ describe('DbLoadSurveyResult UseCase', () => {
     jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockRejectedValueOnce(new Error())
 
     const surveyId = 'any_survey_id'
-    const promise = sut.loadBySurveyId(surveyId)
+    const promise = sut.load(surveyId)
 
     await expect(promise).rejects.toThrow()
   })
@@ -57,7 +57,7 @@ describe('DbLoadSurveyResult UseCase', () => {
     const loadByIdSpy = jest.spyOn(loadSurveyByIdRepositoryStub, 'loadById')
 
     const surveyId = 'any_survey_id'
-    await sut.loadBySurveyId(surveyId)
+    await sut.load(surveyId)
 
     const expected = 'any_survey_id'
     expect(loadByIdSpy).toHaveBeenCalledWith(expected)
@@ -69,7 +69,7 @@ describe('DbLoadSurveyResult UseCase', () => {
     jest.spyOn(loadSurveyResultRepositoryStub, 'loadBySurveyId').mockResolvedValueOnce(null)
 
     const surveyId = 'any_survey_id'
-    const surveyResult = await sut.loadBySurveyId(surveyId)
+    const surveyResult = await sut.load(surveyId)
 
     const expected = {
       surveyId: 'any_id',
@@ -89,7 +89,7 @@ describe('DbLoadSurveyResult UseCase', () => {
     const { sut } = makeSut()
 
     const surveyId = 'any_survey_id'
-    const surveyResult = await sut.loadBySurveyId(surveyId)
+    const surveyResult = await sut.load(surveyId)
 
     const expected = {
       surveyId: 'any_survey_id',
