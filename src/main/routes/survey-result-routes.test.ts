@@ -97,4 +97,13 @@ describe('Survey Routes', () => {
         .expect(403)
     })
   })
+
+  test('Should return 200 on load survey results with accessToken', async () => {
+    const surveyId = await insertMockSurvey()
+    const token = await makeAccessToken()
+    await request(app)
+      .get(`/api/surveys/${surveyId}/results`)
+      .set('x-access-token', token)
+      .expect(200)
+  })
 })
