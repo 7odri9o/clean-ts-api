@@ -149,5 +149,14 @@ describe('Account Mongo Repository', () => {
 
       expect(surveyResult).toEqual(expected)
     }, 300000)
+
+    test('Should return null if there is no survey result', async () => {
+      const sut = makeSut()
+      const surveyId = await mockSurvey()
+
+      const surveyResult = await sut.loadBySurveyId(surveyId)
+
+      expect(surveyResult).toBeNull()
+    }, 300000)
   })
 })
