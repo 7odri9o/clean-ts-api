@@ -1,10 +1,10 @@
 import { SurveyMongoRepository } from './survey-mongo-repository'
 import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 
+import { mockAddSurveyParams } from '@/domain/test'
+
 import MockDate from 'mockdate'
 import { Collection } from 'mongodb'
-
-import { getAddSurveyParams, getAddManySurveyParams } from '@/infra/test'
 
 let surveyCollection: Collection
 
@@ -12,7 +12,7 @@ const makeSut = (): SurveyMongoRepository => {
   return new SurveyMongoRepository()
 }
 
-describe('Account Mongo Repository', () => {
+describe('SurveyMongoRepository', () => {
   beforeAll(async () => {
     MockDate.set(new Date())
     await MongoHelper.connect(process.env.MONGO_URL)
@@ -32,23 +32,26 @@ describe('Account Mongo Repository', () => {
     test('Should adds a new survey on success', async () => {
       const sut = makeSut()
 
-      const data = getAddSurveyParams()
+      const data = mockAddSurveyParams()
       await sut.add(data)
 
-      const survey = await surveyCollection.findOne({ question: 'any_question' })
-      expect(survey).toBeTruthy()
+      const count = await surveyCollection.countDocuments()
+      expect(count).toBe(1)
     })
   })
 
   describe('loadAll()', () => {
     test('Should load all surveys on success', async () => {
       const sut = makeSut()
-      const data = getAddManySurveyParams()
-      await surveyCollection.insertMany(data)
+      const addSurveyModels = [mockAddSurveyParams(), mockAddSurveyParams()]
+      await surveyCollection.insertMany(addSurveyModels)
 
       const surveys = await sut.loadAll()
 
       expect(surveys).toBeArrayOfSize(2)
+      expect(surveys[0].id).toBeTruthy()
+      expect(surveys[0].question).toBe(addSurveyModels[0].question)
+      expect(surveys[1].question).toBe(addSurveyModels[1].question)
     })
 
     test('Should load an empty survey\'s list', async () => {
@@ -64,7 +67,7 @@ describe('Account Mongo Repository', () => {
   describe('loadById()', () => {
     test('Should load survey by id on success', async () => {
       const sut = makeSut()
-      const data = getAddSurveyParams()
+      const data = mockAddSurveyParams()
       const { insertedId } = await surveyCollection.insertOne(data)
       const surveyId = insertedId.toHexString()
 

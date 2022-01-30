@@ -10,6 +10,7 @@
     "dev": "sucrase-node src/main/server.ts",
     "up": "npm run build && docker-compose up -d",
     "down": "docker-compose down",
+    "check": "npm-check -s -u",
     "lint": "eslint --ext .ts src/**",
     "lint:fix": "eslint --fix --ext .ts src/**",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
@@ -35,9 +36,11 @@
     "@": "dist"
   },
   "devDependencies": {
+    "@faker-js/faker": "^6.0.0-alpha.5",
     "@shelf/jest-mongodb": "^2.1.0",
     "@tsconfig/node14": "^1.0.1",
     "@types/bcrypt": "^5.0.0",
+    "@types/faker": "^6.6.9",
     "@types/jest": "^27.0.2",
     "@types/jsonwebtoken": "^8.5.5",
     "@types/mongodb": "^4.0.7",

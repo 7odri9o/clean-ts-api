@@ -1,21 +1,20 @@
 import { DbLoadSurveys } from './db-load-surveys'
-import { LoadSurveysRepository } from './db-load-surveys-protocols'
+
+import { LoadSurveysRepositorySpy } from '@/data/test'
 
 import MockDate from 'mockdate'
 
-import { mockLoadSurveysRepository } from '@/data/test'
-
 type SutTypes = {
   sut: DbLoadSurveys
-  loadSurveysRepositoryStub: LoadSurveysRepository
+  loadSurveysRepositorySpy: LoadSurveysRepositorySpy
 }
 
 const makeSut = (): SutTypes => {
-  const loadSurveysRepositoryStub = mockLoadSurveysRepository()
-  const sut = new DbLoadSurveys(loadSurveysRepositoryStub)
+  const loadSurveysRepositorySpy = new LoadSurveysRepositorySpy()
+  const sut = new DbLoadSurveys(loadSurveysRepositorySpy)
   return {
-    loadSurveysRepositoryStub,
-    sut
+    sut,
+    loadSurveysRepositorySpy
   }
 }
 
@@ -29,42 +28,24 @@ describe('DbLoadSurveys', () => {
   })
 
   test('Should call LoadSurveysRepository', async () => {
-    const { sut, loadSurveysRepositoryStub } = makeSut()
-    const loadAllSpy = jest.spyOn(loadSurveysRepositoryStub, 'loadAll')
+    const { sut, loadSurveysRepositorySpy } = makeSut()
 
     await sut.load()
 
-    expect(loadAllSpy).toHaveBeenCalled()
+    expect(loadSurveysRepositorySpy.callsCount).toBe(1)
   })
 
   test('Should return a surveys\'s list on success', async () => {
-    const { sut } = makeSut()
+    const { sut, loadSurveysRepositorySpy } = makeSut()
 
     const surveys = await sut.load()
 
-    const expected = [{
-      id: 'any_id',
-      question: 'any_question',
-      answers: [{
-        image: 'any_image',
-        answer: 'any_answer'
-      }],
-      date: new Date()
-    }, {
-      id: 'other_id',
-      question: 'other_question',
-      answers: [{
-        image: 'other_image',
-        answer: 'other_answer'
-      }],
-      date: new Date()
-    }]
-    expect(surveys).toEqual(expected)
+    expect(surveys).toEqual(loadSurveysRepositorySpy.surveyModels)
   })
 
   test('Should throw if LoadSurveysRepository throws', async () => {
-    const { sut, loadSurveysRepositoryStub } = makeSut()
-    jest.spyOn(loadSurveysRepositoryStub, 'loadAll').mockRejectedValueOnce(new Error())
+    const { sut, loadSurveysRepositorySpy } = makeSut()
+    jest.spyOn(loadSurveysRepositorySpy, 'loadAll').mockRejectedValueOnce(new Error())
 
     const promise = sut.load()
 

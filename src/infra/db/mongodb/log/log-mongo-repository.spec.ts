@@ -3,6 +3,8 @@ import { MongoHelper } from '@/infra/db/mongodb/helpers/mongo-helper'
 
 import { Collection } from 'mongodb'
 
+import { faker } from '@faker-js/faker'
+
 let errorCollection: Collection
 
 const makeSut = (): LogMongoRepository => {
@@ -26,7 +28,7 @@ describe('Log Mongo Repository', () => {
   test('Should create an error log on success', async () => {
     const sut = makeSut()
 
-    const stack = 'any_error'
+    const stack = faker.random.words()
     await sut.logError(stack)
 
     const count = await errorCollection.countDocuments()

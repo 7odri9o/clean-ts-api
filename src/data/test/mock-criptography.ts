@@ -3,42 +3,46 @@ import { Encrypter } from '@/data/protocols/criptography/encrypter'
 import { Decrypter } from '@/data/protocols/criptography/decrypter'
 import { HashComparer } from '@/data/protocols/criptography/hash-comparer'
 
-const decryptedValue = 'decrypted_value'
-const hashedPassword = 'hashed_password'
-const valueToEncrypt = 'any_token'
+import { faker } from '@faker-js/faker'
 
-export const mockEncrypter = (): Encrypter => {
-  class EncrypterStub implements Encrypter {
-    async encrypt (value: string): Promise<string> {
-      return Promise.resolve(valueToEncrypt)
-    }
+export class EncrypterSpy implements Encrypter {
+  ciphertext = faker.datatype.uuid()
+  plaintext: string
+
+  async encrypt (plaintext: string): Promise<string> {
+    this.plaintext = plaintext
+    return this.ciphertext
   }
-  return new EncrypterStub()
 }
 
-export const mockDecrypter = (): Decrypter => {
-  class DecrypterStub implements Decrypter {
-    async decrypt (value: string): Promise<string | null> {
-      return Promise.resolve(decryptedValue)
-    }
+export class DecrypterSpy implements Decrypter {
+  plaintext = faker.internet.password()
+  ciphertext: string
+
+  async decrypt (ciphertext: string): Promise<string> {
+    this.ciphertext = ciphertext
+    return this.plaintext
   }
-  return new DecrypterStub()
 }
 
-export const mockHasher = (): Hasher => {
-  class HasherStub implements Hasher {
-    async hash (value: string): Promise<string> {
-      return Promise.resolve(hashedPassword)
-    }
+export class HasherSpy implements Hasher {
+  digest = faker.datatype.uuid()
+  plaintext: string
+
+  async hash (plaintext: string): Promise<string> {
+    this.plaintext = plaintext
+    return this.digest
   }
-  return new HasherStub()
 }
 
-export const mockHashComparer = (): HashComparer => {
-  class HashComparerStub implements HashComparer {
-    async compare (value: string, hash: string): Promise<boolean> {
-      return Promise.resolve(true)
-    }
+export class HashComparerSpy implements HashComparer {
+  plaintext: string
+  digest: string
+  isValid = true
+
+  async compare (plaintext: string, digest: string): Promise<boolean> {
+    this.plaintext = plaintext
+    this.digest = digest
+    return this.isValid
   }
-  return new HashComparerStub()
 }

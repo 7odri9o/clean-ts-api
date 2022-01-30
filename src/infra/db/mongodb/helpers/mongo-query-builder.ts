@@ -1,46 +1,35 @@
 export class MongoQueryBuilder {
   private readonly query = []
 
-  match (data: object): MongoQueryBuilder {
+  private addStep (step: string, data: object): MongoQueryBuilder {
     this.query.push({
-      $match: data
+      [step]: data
     })
     return this
+  }
+
+  match (data: object): MongoQueryBuilder {
+    return this.addStep('$match', data)
   }
 
   group (data: object): MongoQueryBuilder {
-    this.query.push({
-      $group: data
-    })
-    return this
+    return this.addStep('$group', data)
   }
 
   unwind (data: object): MongoQueryBuilder {
-    this.query.push({
-      $unwind: data
-    })
-    return this
+    return this.addStep('$unwind', data)
   }
 
   lookup (data: object): MongoQueryBuilder {
-    this.query.push({
-      $lookup: data
-    })
-    return this
+    return this.addStep('$lookup', data)
   }
 
   project (data: object): MongoQueryBuilder {
-    this.query.push({
-      $project: data
-    })
-    return this
+    return this.addStep('$project', data)
   }
 
   sort (data: object): MongoQueryBuilder {
-    this.query.push({
-      $sort: data
-    })
-    return this
+    return this.addStep('$sort', data)
   }
 
   build (): object[] {
