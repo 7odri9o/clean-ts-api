@@ -1,7 +1,7 @@
 import { accountSchema } from './account'
 import { errorSchema } from './errors'
 import { loginParamsSchema, signupParamsSchema } from './login'
-import { saveSurveyResultSchema, surveyResultSchema } from './survey-results'
+import { saveSurveyResultSchema, surveyResultSchema, surveyResultAnswerSchema } from './survey-results'
 import { addSurveySchema, surveyAnswerSchema, surveySchema, surveysSchema } from './surveys'
 
 export * from './auth'
@@ -21,5 +21,6 @@ export const schemas = {
   surveys: surveysSchema,
   addSurvey: addSurveySchema,
   saveSurveyResult: saveSurveyResultSchema,
-  surveyResult: surveyResultSchema
+  surveyResult: surveyResultSchema,
+  surveyResultAnswer: surveyResultAnswerSchema
 }
